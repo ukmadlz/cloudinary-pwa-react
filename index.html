@@ -11,207 +11,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0e2f5a">
 
-    <!-- React app scripts -->
-    <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
-    <script src="https://unpkg.com/lodash@4.17.4/lodash.js"></script>
-    <script src="https://unpkg.com/react@15.3.1/dist/react.min.js"></script>
-    <script src="https://unpkg.com/react-dom@15.3.1/dist/react-dom.min.js"></script>
-    <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
-    <script src="https://unpkg.com/cloudinary-core@2.3.0/cloudinary-core.js"></script>
-    <script src="https://unpkg.com/cloudinary-react@1.0.3/dist/cloudinary-react.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
     <!-- Style the app -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<div id="app-root">
-  Page loading, please wait…
-</div>
-<script type="text/babel">
-    let imageJson = "/images.json";
-    let Image = cloudinaryReact.Image;
-    let Link = ReactRouterDOM.Link;
-    let Router = ReactRouterDOM.HashRouter;
-    let Route = ReactRouterDOM.Route;
-    let IndexRoute = ReactRouterDOM.IndexRoute;
-    let Switch = ReactRouterDOM.Switch;
-    let browserHistory = ReactRouterDOM.browserHistory;
-    // Components
-    class NavBar extends React.Component {
-      render() {
-        return <nav>
-          <div className="nav-wrapper">
-            <Link to="/" className="brand-logo">
-              <Image cloudName="elsmore-me" title="Cloudinary Demo" publicId="cloudinary_logo" width="200" crop="scale"/>
-            </Link>
-          </div>
-        </nav>;
-      }
-    }
-    class SiteFooter extends React.Component {
-      render() {
-        return <footer className="page-footer">
-          <div className="container">
-            <div className="row">
-              <div className="col l6 s12">
-                <h5 className="white-text">React Progressive Web App Demo</h5>
-                <p className="grey-text text-lighten-4">See how to super charge your React app by following the tenets of Progressive Web Apps and using service worker progressively.</p>
-              </div>
+  <div id="app-root">
+    Page loading, please wait…
+  </div>
+
+  <!-- React app scripts -->
+  <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+  <script src="https://unpkg.com/lodash@4.17.4/lodash.js"></script>
+  <script src="https://unpkg.com/react@15.3.1/dist/react.min.js"></script>
+  <script src="https://unpkg.com/react-dom@15.3.1/dist/react-dom.min.js"></script>
+  <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
+  <script src="https://unpkg.com/cloudinary-core@2.3.0/cloudinary-core.js"></script>
+  <script src="https://unpkg.com/cloudinary-react@1.0.3/dist/cloudinary-react.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/babel">
+      let imageJson = "/images.json";
+      let Image = cloudinaryReact.Image;
+      let Link = ReactRouterDOM.Link;
+      let Router = ReactRouterDOM.HashRouter;
+      let Route = ReactRouterDOM.Route;
+      let IndexRoute = ReactRouterDOM.IndexRoute;
+      let Switch = ReactRouterDOM.Switch;
+      let browserHistory = ReactRouterDOM.browserHistory;
+      // Components
+      class NavBar extends React.Component {
+        render() {
+          return <nav>
+            <div className="nav-wrapper">
+              <Link to="/" className="brand-logo">
+                <Image cloudName="elsmore-me" title="Cloudinary Demo" publicId="cloudinary_logo" width="200" crop="scale"/>
+              </Link>
             </div>
-          </div>
-          <div className="footer-copyright">
+          </nav>;
+        }
+      }
+      class SiteFooter extends React.Component {
+        render() {
+          return <footer className="page-footer">
             <div className="container">
-            © 2017 Copyright Cloudinary
-            <a className="grey-text text-lighten-4 right" href="https://elsmore.me">Made with &#9829; by Mike Elsmore</a>
-            </div>
-          </div>
-        </footer>;
-      }
-    }
-    class PhotoThumb extends React.Component {
-      render() {
-        return <div className="card hoverable small">
-          <div className="card-image">
-            <cloudinaryReact.CloudinaryContext cloudName="elsmore-me">
-              <cloudinaryReact.Image publicId={this.props.publicId} title={this.props.name} width="200">
-                <cloudinaryReact.Transformation height="500" width="500" crop="thumb" gravity="face"/>
-                <cloudinaryReact.Transformation height="150" width="300" crop="fill"/>
-                <cloudinaryReact.Transformation overlay="cloudinary_logo" width="100" x="10" y="10" opacity="70" gravity="south_east"/>
-              </cloudinaryReact.Image>
-            </cloudinaryReact.CloudinaryContext>
-            <span className="card-title">{this.props.name}</span>
-          </div>
-          <div className="card-content">
-            <p>This photo could be of anything, but faces help prove a point.</p>
-          </div>
-          <div className="card-action">
-            <Link to={`/view/${this.props.publicId}`}>Go Big</Link>
-          </div>
-        </div>;
-      }
-    }
-    let Homepage = React.createClass({
-      getInitialState: function() {
-        return {
-          photos: []
-        }
-      },
-
-      componentDidMount: function() {
-        // Is there a React-y way to avoid rebinding `this`? fat arrow?
-        var th = this;
-        this.serverRequest =
-          axios.get(imageJson)
-            .then(function(result) {
-              th.setState({
-                photos: result.data
-              });
-            })
-      },
-
-      componentWillUnmount: function() {
-        // this.serverRequest.abort();
-      },
-
-      render: function() {
-        return (
-          <div className="row">
-            {this.state.photos.map(function(photo) {
-                return (
-                  <div className="col l3 m4 s12" >
-                    <PhotoThumb publicId={photo.publicId} name={photo.name}></PhotoThumb>
-                  </div>
-                );
-              })}
-          </div>
-        )
-      }
-    });
-    let ViewPhoto = React.createClass({
-      getInitialState: function() {
-        return {
-          photos: []
-        }
-      },
-
-      componentDidMount: function() {
-        // Is there a React-y way to avoid rebinding `this`? fat arrow?
-        var th = this;
-        this.serverRequest =
-          axios.get(imageJson)
-            .then(function(result) {
-              th.setState({
-                photos: result.data
-              });
-            })
-      },
-
-      componentWillUnmount: function() {
-        // this.serverRequest.abort();
-      },
-      render: function() {
-        const publicId = this.props.match.params.publicId;
-        let photoDetails = {};
-        this.state.photos.map(function(photo) {
-          if(photo.publicId == publicId) {
-            photoDetails = photo;
-          }
-        });
-        return (
-            <div>
-              <div className="col s12" >
-                <h1 className="center-align">{photoDetails.name}</h1>
-              </div>
               <div className="row">
-                <div className="col l7 s12" >
-                  <cloudinaryReact.CloudinaryContext cloudName="elsmore-me">
-                      <cloudinaryReact.Image publicId={photoDetails.publicId} width="100%">
-                          <cloudinaryReact.Transformation overlay="cloudinary_logo" width="500" x="10" y="10" opacity="70" gravity="south_east"/>
-                      </cloudinaryReact.Image>
-                  </cloudinaryReact.CloudinaryContext>
-                </div>
-                <div className="col l5 s12" >
-                  <p className="flow-text" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor massa a odio convallis fermentum. Ut imperdiet arcu sed fermentum luctus. Duis placerat auctor turpis ac varius. In libero sapien, laoreet mollis felis viverra, egestas eleifend arcu. Aliquam dapibus enim a bibendum semper. Etiam elit sapien, commodo vestibulum lacus sed, congue mollis sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse et nisi pulvinar, eleifend leo sit amet, semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis rutrum tellus, dapibus efficitur arcu dignissim nec. Praesent sed rutrum orci. Quisque et urna vel orci interdum varius ac id ex. Sed magna massa, cursus sit amet posuere quis, sollicitudin pellentesque eros. Proin imperdiet nibh id urna dapibus, at luctus orci fringilla. Aenean ut enim tristique, blandit lacus sed, luctus elit. Nulla ac viverra diam, quis vestibulum sapien.</p>
-                  <p>Sed tincidunt mattis sapien et bibendum. Etiam sollicitudin augue ut nibh lacinia, sollicitudin pretium ante fringilla. Nam interdum diam id tellus dapibus, eu tincidunt elit interdum. Aliquam ligula nunc, vestibulum sit amet pharetra eu, vestibulum ut orci. Etiam sed urna purus. Nunc varius, velit nec sodales tincidunt, lacus justo pharetra est, a faucibus magna ante at mauris. Nam dictum ornare nunc vel interdum. Duis eget ornare justo. Phasellus non tempor quam, et rutrum sem. Etiam molestie pulvinar suscipit. Pellentesque semper, lacus ac scelerisque rhoncus, libero erat convallis diam, a interdum odio metus nec ante. Sed pellentesque tortor porttitor turpis efficitur lacinia. Quisque pharetra luctus nisi in vestibulum.</p>
-                  <p>Vestibulum dictum elit sed velit vehicula suscipit. Aliquam semper, nunc vel mollis semper, neque metus fermentum quam, a placerat nisi erat ornare erat. Pellentesque pulvinar, magna quis finibus placerat, metus justo elementum lectus, at elementum sem eros eget enim. Nulla tortor velit, gravida ac nibh vel, porta ornare elit. Pellentesque at fermentum elit. Maecenas pharetra tempor orci eu iaculis. Suspendisse potenti. Proin pretium condimentum venenatis.</p>
-                  <p>Vestibulum pellentesque orci mi, eu pellentesque felis aliquam nec. Suspendisse pharetra mattis facilisis. Nam egestas faucibus odio, sed mattis ante tincidunt sit amet. Vestibulum leo purus, efficitur porttitor ipsum luctus, bibendum imperdiet odio. Praesent nibh lacus, pulvinar non euismod sed, volutpat at augue. Pellentesque enim leo, maximus nec arcu ac, posuere pellentesque elit. Suspendisse molestie sed justo eget facilisis.</p>
-                  <p>Cras finibus dignissim nulla, ac porta ligula pretium vel. Vivamus non dolor lectus. Duis magna ligula, fringilla ac ex eu, aliquam semper erat. Donec non ipsum at tellus mattis sagittis fringilla quis libero. Nam aliquet rutrum libero, id finibus odio ornare hendrerit. Sed eget nulla lacinia, malesuada arcu non, commodo neque. Duis quis varius libero, ut volutpat justo.</p>
+                <div className="col l6 s12">
+                  <h5 className="white-text">React Progressive Web App Demo</h5>
+                  <p className="grey-text text-lighten-4">See how to super charge your React app by following the tenets of Progressive Web Apps and using service worker progressively.</p>
                 </div>
               </div>
             </div>
-        )
+            <div className="footer-copyright">
+              <div className="container">
+              © 2017 Copyright Cloudinary
+              <a className="grey-text text-lighten-4 right" href="https://elsmore.me">Made with &#9829; by Mike Elsmore</a>
+              </div>
+            </div>
+          </footer>;
+        }
       }
-    });
-
-    class Main extends React.Component {
-      render() {
-        return <main>
-          <Switch>
-            <Route path='/view/:publicId' component={ViewPhoto}/>
-            <Route exact path='/' component={Homepage}/>
-          </Switch>
-        </main>;
+      class PhotoThumb extends React.Component {
+        render() {
+          return <div className="card hoverable small">
+            <div className="card-image">
+              <cloudinaryReact.CloudinaryContext cloudName="elsmore-me">
+                <cloudinaryReact.Image publicId={this.props.publicId} title={this.props.name} width="200">
+                  <cloudinaryReact.Transformation height="500" width="500" crop="thumb" gravity="face"/>
+                  <cloudinaryReact.Transformation height="150" width="300" crop="fill"/>
+                  <cloudinaryReact.Transformation overlay="cloudinary_logo" width="100" x="10" y="10" opacity="70" gravity="south_east"/>
+                </cloudinaryReact.Image>
+              </cloudinaryReact.CloudinaryContext>
+              <span className="card-title">{this.props.name}</span>
+            </div>
+            <div className="card-content">
+              <p>This photo could be of anything, but faces help prove a point.</p>
+            </div>
+            <div className="card-action">
+              <Link to={`/view/${this.props.publicId}`} className="waves-effect waves-light btn" >Go Big</Link>
+            </div>
+          </div>;
+        }
       }
-    }
+      let Homepage = React.createClass({
+        getInitialState: function() {
+          return {
+            photos: []
+          }
+        },
 
-    class App extends React.Component {
-      render() {
-        return <div>
-          <NavBar/>
-          <Main/>
-          <SiteFooter/>
-        </div>;
+        componentDidMount: function() {
+          // Is there a React-y way to avoid rebinding `this`? fat arrow?
+          var th = this;
+          this.serverRequest =
+            axios.get(imageJson)
+              .then(function(result) {
+                th.setState({
+                  photos: result.data
+                });
+              })
+        },
+
+        componentWillUnmount: function() {
+          // this.serverRequest.abort();
+        },
+
+        render: function() {
+          return (
+            <div className="row">
+              {this.state.photos.map(function(photo) {
+                  return (
+                    <div className="col l3 m4 s12" >
+                      <PhotoThumb publicId={photo.publicId} name={photo.name}></PhotoThumb>
+                    </div>
+                  );
+                })}
+            </div>
+          )
+        }
+      });
+      let ViewPhoto = React.createClass({
+        getInitialState: function() {
+          return {
+            photos: []
+          }
+        },
+
+        componentDidMount: function() {
+          // Is there a React-y way to avoid rebinding `this`? fat arrow?
+          var th = this;
+          this.serverRequest =
+            axios.get(imageJson)
+              .then(function(result) {
+                th.setState({
+                  photos: result.data
+                });
+              })
+        },
+
+        componentWillUnmount: function() {
+          // this.serverRequest.abort();
+        },
+        render: function() {
+          const publicId = this.props.match.params.publicId;
+          let photoDetails = {};
+          this.state.photos.map(function(photo) {
+            if(photo.publicId == publicId) {
+              photoDetails = photo;
+            }
+          });
+          return (
+              <div>
+                <div className="col s12" >
+                  <h1 className="center-align">{photoDetails.name}</h1>
+                </div>
+                <div className="row">
+                  <div className="col l7 s12" >
+                    <cloudinaryReact.CloudinaryContext cloudName="elsmore-me">
+                        <cloudinaryReact.Image publicId={photoDetails.publicId} width="100%">
+                            <cloudinaryReact.Transformation overlay="cloudinary_logo" width="500" x="10" y="10" opacity="70" gravity="south_east"/>
+                        </cloudinaryReact.Image>
+                    </cloudinaryReact.CloudinaryContext>
+                  </div>
+                  <div className="col l5 s12" >
+                    <p className="flow-text" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor massa a odio convallis fermentum. Ut imperdiet arcu sed fermentum luctus. Duis placerat auctor turpis ac varius. In libero sapien, laoreet mollis felis viverra, egestas eleifend arcu. Aliquam dapibus enim a bibendum semper. Etiam elit sapien, commodo vestibulum lacus sed, congue mollis sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse et nisi pulvinar, eleifend leo sit amet, semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis rutrum tellus, dapibus efficitur arcu dignissim nec. Praesent sed rutrum orci. Quisque et urna vel orci interdum varius ac id ex. Sed magna massa, cursus sit amet posuere quis, sollicitudin pellentesque eros. Proin imperdiet nibh id urna dapibus, at luctus orci fringilla. Aenean ut enim tristique, blandit lacus sed, luctus elit. Nulla ac viverra diam, quis vestibulum sapien.</p>
+                    <p>Sed tincidunt mattis sapien et bibendum. Etiam sollicitudin augue ut nibh lacinia, sollicitudin pretium ante fringilla. Nam interdum diam id tellus dapibus, eu tincidunt elit interdum. Aliquam ligula nunc, vestibulum sit amet pharetra eu, vestibulum ut orci. Etiam sed urna purus. Nunc varius, velit nec sodales tincidunt, lacus justo pharetra est, a faucibus magna ante at mauris. Nam dictum ornare nunc vel interdum. Duis eget ornare justo. Phasellus non tempor quam, et rutrum sem. Etiam molestie pulvinar suscipit. Pellentesque semper, lacus ac scelerisque rhoncus, libero erat convallis diam, a interdum odio metus nec ante. Sed pellentesque tortor porttitor turpis efficitur lacinia. Quisque pharetra luctus nisi in vestibulum.</p>
+                    <p>Vestibulum dictum elit sed velit vehicula suscipit. Aliquam semper, nunc vel mollis semper, neque metus fermentum quam, a placerat nisi erat ornare erat. Pellentesque pulvinar, magna quis finibus placerat, metus justo elementum lectus, at elementum sem eros eget enim. Nulla tortor velit, gravida ac nibh vel, porta ornare elit. Pellentesque at fermentum elit. Maecenas pharetra tempor orci eu iaculis. Suspendisse potenti. Proin pretium condimentum venenatis.</p>
+                    <p>Vestibulum pellentesque orci mi, eu pellentesque felis aliquam nec. Suspendisse pharetra mattis facilisis. Nam egestas faucibus odio, sed mattis ante tincidunt sit amet. Vestibulum leo purus, efficitur porttitor ipsum luctus, bibendum imperdiet odio. Praesent nibh lacus, pulvinar non euismod sed, volutpat at augue. Pellentesque enim leo, maximus nec arcu ac, posuere pellentesque elit. Suspendisse molestie sed justo eget facilisis.</p>
+                    <p>Cras finibus dignissim nulla, ac porta ligula pretium vel. Vivamus non dolor lectus. Duis magna ligula, fringilla ac ex eu, aliquam semper erat. Donec non ipsum at tellus mattis sagittis fringilla quis libero. Nam aliquet rutrum libero, id finibus odio ornare hendrerit. Sed eget nulla lacinia, malesuada arcu non, commodo neque. Duis quis varius libero, ut volutpat justo.</p>
+                  </div>
+                </div>
+              </div>
+          )
+        }
+      });
+
+      class Main extends React.Component {
+        render() {
+          return <main>
+            <Switch>
+              <Route path='/view/:publicId' component={ViewPhoto}/>
+              <Route exact path='/' component={Homepage}/>
+            </Switch>
+          </main>;
+        }
       }
-    }
 
-    ReactDOM.render(
-        <Router history={browserHistory}>
-          <App/>
-        </Router>,
-      document.getElementById('app-root')
-    );
-</script>
+      class App extends React.Component {
+        render() {
+          return <div>
+            <NavBar/>
+            <Main/>
+            <SiteFooter/>
+          </div>;
+        }
+      }
+
+      ReactDOM.render(
+          <Router history={browserHistory}>
+            <App/>
+          </Router>,
+        document.getElementById('app-root')
+      );
+
+      // Register the service worker
+      // Add Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).then(function(reg) {
+
+          if (reg.installing) {
+            console.log('Service worker installing');
+          } else if (reg.waiting) {
+            console.log('Service worker installed');
+          } else if (reg.active) {
+            console.log('Service worker active');
+          }
+
+        }).catch(function(error) {
+          // registration failed
+          console.log('Registration failed with ' + error);
+        });
+      }
+  </script>
 </body>
 </html>
