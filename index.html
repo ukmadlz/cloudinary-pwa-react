@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Cloudinary Progressive Web App React</title>
+
+    <!-- Make this a PWA -->
+    <link rel="manifest" href="/manifest.webapp">
+
+    <!-- Display -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0e2f5a">
+
+    <!-- React app scripts -->
     <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
     <script src="https://unpkg.com/lodash@4.17.4/lodash.js"></script>
     <script src="https://unpkg.com/react@15.3.1/dist/react.min.js"></script>
@@ -12,10 +21,14 @@
     <script src="https://unpkg.com/cloudinary-react@1.0.3/dist/cloudinary-react.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+    <!-- Style the app -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<div id="app-root"></div>
+<div id="app-root">
+  Page loading, please wait…
+</div>
 <script type="text/babel">
     let imageJson = "/images.json";
     let Image = cloudinaryReact.Image;
@@ -146,7 +159,6 @@
             photoDetails = photo;
           }
         });
-        console.log(photoDetails);
         return (
             <div>
               <div className="col s12" >
@@ -159,7 +171,6 @@
                           <cloudinaryReact.Transformation overlay="cloudinary_logo" width="500" x="10" y="10" opacity="70" gravity="south_east"/>
                       </cloudinaryReact.Image>
                   </cloudinaryReact.CloudinaryContext>
-                  <a href="" >View full</a>
                 </div>
                 <div className="col l5 s12" >
                   <p className="flow-text" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor massa a odio convallis fermentum. Ut imperdiet arcu sed fermentum luctus. Duis placerat auctor turpis ac varius. In libero sapien, laoreet mollis felis viverra, egestas eleifend arcu. Aliquam dapibus enim a bibendum semper. Etiam elit sapien, commodo vestibulum lacus sed, congue mollis sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse et nisi pulvinar, eleifend leo sit amet, semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis rutrum tellus, dapibus efficitur arcu dignissim nec. Praesent sed rutrum orci. Quisque et urna vel orci interdum varius ac id ex. Sed magna massa, cursus sit amet posuere quis, sollicitudin pellentesque eros. Proin imperdiet nibh id urna dapibus, at luctus orci fringilla. Aenean ut enim tristique, blandit lacus sed, luctus elit. Nulla ac viverra diam, quis vestibulum sapien.</p>
